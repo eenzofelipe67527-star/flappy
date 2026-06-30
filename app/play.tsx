@@ -1,16 +1,37 @@
 import MovingBackground from "@/components/MovingBackground";
 import Pipe from "@/components/Pipe";
+import { DURATION } from "@/constants/animation";
 import { useAudioPlayer } from "expo-audio";
+import { useEffect, useState } from "react";
 import { Image, ImageBackground, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Play() {
   const jumpSound = useAudioPlayer(require("@/assets/audios/ee.mp3"));
+  const pointSound = useAudioPlayer(require("@/assets/audios/point.mp3"));
+  const [obstacles, setObstacles] = useState([] as string[]);
 
   function handleJump() {
-jumpSound.seekTo(0);
-jumpSound.play();  
-}
+    jumpSound.seekTo(0);
+    jumpSound.play();
+  }
+
+  function spawnObstacle() {
+    setObstacles((oldValue) => [...oldValue, Date.now().toString()]);
+  }
+
+  function removeObstacle(id: string) {
+    setObstacles((oldValue) => oldValue.filter((item) => item !== id));
+    pointSound.seekTo(0);
+    pointSound.play();
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => spawnObstacle(), DURATION / 4);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
   return (
     <ImageBackground
@@ -25,7 +46,14 @@ jumpSound.play();
             style={styles.bird}
           />
 
-      <Pipe gapY={190} />
+          {obstacles.map((obstacle) => (
+            <Pipe
+              key={obstacle}
+              gapY={195}
+              onEnd={() => removeObstacle(obstacle)}
+            />
+          ))}
+
         </SafeAreaView>
       </Pressable>
 

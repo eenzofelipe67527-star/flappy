@@ -1,22 +1,61 @@
-import { GAP_SIZE, PIPE_WIDTH } from "@/constants/pipe";
+import { DURATION } from "@/constants/animation";
+import { CAP_HEIGHT, GAP_SIZE, PIPE_WIDTH } from "@/constants/pipe";
+import { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 interface Props {
     gapY: number;
+    onEnd: () => void;
 }
 
-export default function Pipe({ gapY }: Props) {
-    const {height} = Dimensions.get("window")
+export default function Pipe({ gapY, onEnd }: Props) {
+    const { height, width } = Dimensions.get("window")
     const topHeight = gapY - GAP_SIZE / 2;
     const bottomY = gapY + GAP_SIZE / 2;
     const bottomHeight = height - bottomY;
+
+    const translateX = useSharedValue(0);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: -translateX.value }],
+
+    }))
+
+    useEffect(() => {
+        translateX.value = withTiming(
+            width,
+            {
+                duration: DURATION,
+                easing: Easing.linear
+            },
+            () => runOnJS(onEnd)(),
+        );
+    }, [translateX]);
+
     return (
-    <>
-    <View style={[styles.pipe, { left: 100, top: 0, height: topHeight }]} />
-    <View style={[styles.pipe, { left: 100, top: bottomY, height: bottomHeight }]} />
-    </>
-    );
-}
+        <>
+            <Animated.View style={[styles.pipe, {
+                left: width, top: 0, height:
+                    topHeight
+            }, animatedStyle]} />
+            <Animated.View style={[styles.cap, {
+                left: width - 5, top: topHeight -
+                    CAP_HEIGHT
+            }, animatedStyle]} />
+
+            <Animated.View
+                style={[styles.pipe, {
+                    left: width, top: bottomY, height:
+                        bottomHeight
+                }, animatedStyle]}
+            />
+            <Animated.View style={[styles.cap, { left: width - 5, top: bottomY }, animatedStyle]} />
+        </>
+    )
+};
+
+
 
 const styles = StyleSheet.create({
     pipe: {
@@ -25,6 +64,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#2fce36",
         borderLeftWidth: 4,
         borderRightWidth: 4,
+        borderColor: "#1a5d22",
+    },
+    cap: {
+        position: "absolute",
+        width: PIPE_WIDTH + 10,
+        height: CAP_HEIGHT,
+        backgroundColor: "#2ecc71",
+        borderWidth: 4,
         borderColor: "#1a5d22",
     }
 })
