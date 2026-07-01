@@ -1,3 +1,4 @@
+import BackgroundSound from "@/components/backgroundSound";
 import GradientText from "@/components/GradientText";
 import MovingBackground from "@/components/MovingBackground";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,6 +19,7 @@ export default function Home() {
       resizeMode="cover"
       style={styles.background}
     >
+      <BackgroundSound source={require("@/assets/audios/ee.mp3")} />
       <SafeAreaView style={styles.screen}>
         <GradientText 
         colors={["#FF8A00", "#FFD600"]} 
@@ -62,7 +64,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 50,
-    fontWeight: "bold",
     marginTop: 30,
     paddingRight: 3,
     fontFamily: "LuckiestGuy",

@@ -38,19 +38,28 @@ export default function Pipe({ gapY, onEnd }: Props) {
             <Animated.View style={[styles.pipe, {
                 left: width, top: 0, height:
                     topHeight
-            }, animatedStyle]} />
+            }, animatedStyle]} 
+            >
+
+                   </Animated.View>
+
+
             <Animated.View style={[styles.cap, {
                 left: width - 5, top: topHeight -
                     CAP_HEIGHT
-            }, animatedStyle]} />
+            }, animatedStyle]}
+            >
+
+            </Animated.View>
 
             <Animated.View
                 style={[styles.pipe, {
                     left: width, top: bottomY, height:
                         bottomHeight
                 }, animatedStyle]}
-            />
-            <Animated.View style={[styles.cap, { left: width - 5, top: bottomY }, animatedStyle]} />
+            >   </Animated.View>
+
+            <Animated.View style={[styles.cap, { left: width - 5, top: bottomY }, animatedStyle]} >   </Animated.View>
         </>
     )
 };
